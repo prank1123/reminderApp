@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Delete Reminder</title>
+	<link rel="stylesheet" href ="./view_rem.css"/>
+	<link href="https://fonts.googleapis.com/css?family=Quicksand&display=swap" rel="stylesheet">
+
+	<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
+
+	<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-database.js"></script>
+</head>
+<body>
+	<div class="root">
+		<div class="navbar">
+			<div class="appname">
+				ReminderApp
+			</div>
+
+			<div class="function">
+				Delete Reminder
+			</div>
+			
+		</div>
+		<div class="logpag">
+			<div><button onclick="logout()">logout</button>
+				<button  class="cancelbtn" onclick="window.location.href='index.html'"> Home</button>
+			</div>
+			 <div class="wrapper-reminder" id="wrapper-reminder">
+			 </div>
+		</div>
+		<div style="height: 100px;"></div>
+	</div>
+
+
+<script type="text/javascript">
+	var d = !!localStorage.getItem('sessionid')
+	if (!d) {
+		window.location.href = 'login.html'
+	}
+	function logout(){
+		localStorage.setItem('sessionid', '')
+		window.location.href = 'login.html'
+
+	}
+</script>
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBrm1voECJXC7paHhrKZNEGEpAfWNxgcMU",
+    authDomain: "reminderapp-51e92.firebaseapp.com",
+    databaseURL: "https://reminderapp-51e92.firebaseio.com",
+    projectId: "reminderapp-51e92",
+    storageBucket: "reminderapp-51e92.appspot.com",
+    messagingSenderId: "276849985833",
+    appId: "1:276849985833:web:ef60ca12120b4107108f38",
+    measurementId: "G-2X2LTRW0WT"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  
+  var db = firebase.database();
+
+  	var reminders = []
+  	// { "date" : true}, {"subject": true}, {"description":true},{"email": false}, {"contact": false}, {"sms":false}, {"recur": false}
+	firebase.database().ref('/reminders/').once('value').then(function(snapshot) {
+	  var data = snapshot.val();
+	  // console.log(data)
+	  Object.keys(data).map( e => {
+	  	data[e].id = e
+	  	reminders.push(data[e])
+	  })
+	  console.log(reminders)
+		
+		var nav = "<tr><td>Subject</td><td>Description</td><td>Email</td><td>Contact</td><td>SMS</td><td>Delete</td></tr>"
+	
+		var table = document.createElement('table');
+		var content = ''
+		reminders.forEach (e => {
+			console.log(e)
+		    content += "<tr><td class='subject'>"+ e.subject+"</td>" +
+			 	"<td class='description'>"+e.description+'</td>' +
+			 	"<td class='email'>"+e.email+'</td>' +
+			 	"<td class='contact'>"+e.contact+'</td>' +
+			 	"<td class='sms'>"+e.sms+'</td>' +
+			 	"<td>"+"<button onclick='deleteReminder(\""+e.id+"\")'>Delete</button>" +'</tr>' 
+
+		    
+		})
+
+	    table.innerHTML = nav + content
+
+	    document.getElementById('wrapper-reminder').appendChild(table);
+	});
+
+	function deleteReminder(e) {
+		console.log(e)
+		firebase.database().ref('/reminders/'+e).remove()
+		window.location.href = 'del_rem.html'
+	}
+
+</script>
+</body>
+</html>

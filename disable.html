@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Disable Reminder</title>
+	<link rel="stylesheet" href ="./disable.css"/>
+	<link href="https://fonts.googleapis.com/css?family=Quicksand&display=swap" rel="stylesheet">
+	<!-- The core Firebase JS SDK is always required and must be listed first -->
+	<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
+
+	<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-database.js"></script>
+	<!-- <script src="/__/firebase/init.js"></script> -->
+
+</head>
+<body>
+	<div class="root">
+
+		<div class="function">
+				Disable Reminder
+			</div>
+
+		 <div id='form'>
+
+			<div class="container">
+			<label for="date"><b>Select date :</b></label>
+			<input type="date" placeholder="Select date" name="date" required id="date"> <br/>
+
+			<label for="subject"><b>Subject: </b></label>
+			<select placeholder="Select subject" name="subject" required id="subject"> <br/>
+				<option>Movie</option>
+				<option>Schedule</option>
+				<option>Personal</option>
+			</select><br/>
+			<div id="SelectContainer" >
+			  		
+			  </div>
+			<div class="dropdown">
+			  <button onclick="myFunction()" class="dropbtn" id="fetchReminder">Fetch Reminders</button>
+			  
+			</div> 
+
+			<button  class="cancelbtn" onclick="window.location.href='index.html'"> Home</button>
+
+			<label for="enable"></label>
+			<button class="disablbtn" onclick="disable()">Disable</button>
+
+			<div id="msg"></div>	
+
+			</div>
+		</div> 
+	</div>
+
+<script type="text/javascript">
+	var d = !!localStorage.getItem('sessionid')
+	if (!d) {
+		window.location.href = 'login.html'
+	}
+	function logout(){
+		localStorage.setItem('sessionid', '')
+		window.location.href = 'login.html'
+	}
+</script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBrm1voECJXC7paHhrKZNEGEpAfWNxgcMU",
+    authDomain: "reminderapp-51e92.firebaseapp.com",
+    databaseURL: "https://reminderapp-51e92.firebaseio.com",
+    projectId: "reminderapp-51e92",
+    storageBucket: "reminderapp-51e92.appspot.com",
+    messagingSenderId: "276849985833",
+    appId: "1:276849985833:web:ef60ca12120b4107108f38",
+    measurementId: "G-2X2LTRW0WT"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  
+  var db = firebase.database();
+
+  console.log('Loading')
+
+  	// { "date" : true}, {"subject": true}, {"description":true},{"email": false}, {"contact": false}, {"sms":false}, {"recur": false}
+  	let str = window.location.href;
+  	id = str.substring(str.length - 20, str.length)
+  	console.log(id)
+
+
+
+  function Reminder() {
+    const fields = [
+  		'date','subject', 'description', 'email', 'contact', 'sms',
+  	]
+  	const d = document.getElementById('date')
+  	console.log(d.value)
+  	let data = {
+  		date: '',
+  		subject: '',
+  		description: '',
+  		email: '',
+  		contact: '',
+  		sms: '',
+  		recur: ''
+  	}
+  	fields.forEach((e,i) =>{
+  		let d = document.getElementById(e)
+  		data[e] = d.value
+  	})
+  	console.log(data)
+  	console.log('id', id)
+  	db.ref('/reminders/' + id).pu(data)
+  }
+
+  	 let reminders = []
+
+  function myFunction () {
+
+	 firebase.database().ref('/reminders/' ).once('value').then(function(snapshot) {
+	 	var data = snapshot.val();
+	 	console.log('data', data)
+	 		  // console.log(data)
+	 	Object.keys(data).map( e => {
+	 		data[e].id = e
+	 		reminders.push(data[e])
+	 	})
+	     const fields = [
+  			'date','subject', 'description', 'email', 'contact', 'sms','enable',
+		]
+		let d = document.getElementById('myDropdown')
+		var select = document.getElementById('SelectContainer');
+		let date = document.getElementById('date').value
+		let subject = document.getElementById('subject').value
+
+		var options = ''
+		console.log(date, subject)
+		reminders.forEach(e => {
+			if (e.subject == subject && e.date == date) {
+				options += "<option value='"+ e.id +"'name='"+e.id+"'>"+ e.description +'</option>'
+			}
+		})
+		console.log(options)
+		select.innerHTML = "Select reminder <select id='item'>"+options+'</select>'
+		d.appendChild(select)
+		
+		document.getElementById('fetchReminder').style.display = 'none'
+	})  	
+  }
+  function disable() {
+  	var id = document.getElementById('item').value
+  	var data = {}
+  	reminders.forEach(e => {
+  		if (e.id = id) {
+  			data = e
+  		}
+  	})
+  	console.log(data, id)
+  	data.enable = false
+
+  	db.ref('/reminders/' + id).update(data)
+  	
+  	document.getElementById('msg').innerHTML = 'Disabled !'
+  }
+</script>
+</body>
+</html>

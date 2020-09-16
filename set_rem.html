@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Set Reminder</title>
+	<link rel="stylesheet" href ="./set_rem.css"/>
+	<link href="https://fonts.googleapis.com/css?family=Quicksand&display=swap" rel="stylesheet">
+	<!-- The core Firebase JS SDK is always required and must be listed first -->
+	<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
+
+	<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-database.js"></script>
+	<!-- <script src="/__/firebase/init.js"></script> -->
+
+</head>
+<body>
+	<div class="root">
+		 <form>
+
+			<div class="container">
+			<label for="date"><b>Select date :</b></label>
+			<input type="date" placeholder="Select date" name="date" required id="date"> <br/>
+
+			<label for="subject"><b>Subject: </b></label>
+			<select placeholder="Select subject" name="subject" required id="subject"> <br/>
+				<option>Movie</option>
+				<option>Schedule</option>
+				<option>Personal</option>
+			</select><br/>
+
+			<label for="description"><b>Add description: </b></label>
+			<textarea type="text" name="description"required placeholder="Add description" id="description"></textarea><br/>
+
+			<label for="email"><b>Email address :</b></label>
+			<input type="text" placeholder="email" name="email"  id="email"> <br/>
+
+			<label for="contact"><b>Contact no. :</b></label>
+			<input type="text" placeholder="contact" name="contact"  id="contact"> <br/>
+
+			<label for="sms"><b>SMS no. :</b></label>
+			<input type="text" placeholder="sms" name="sms"  id="sms"> <br/>
+
+			<label for="sms"><b>Recur for next :</b></label>
+			<input type="checkbox" name="seven" value="Bike" id="seven" class="recur"> 7 Days
+			<input type="checkbox" name="five" value="Car" id="five" class="recur"> 5 Days
+			<input type="checkbox" name="three" value="Boat" class="recur" id="three"> 3 Days
+			<input type="checkbox" name="two" value="Boat" class="recur" checked id="two"> 2 Days<br/>
+
+			<label for="enable"></label>
+			<input type="radio" name="enable" id="enable" value="true">
+
+
+			<div class="container" style="background-color:#f1f1f1">
+			<button  class="cancelbtn" onclick="window.location.href='index.html'"> Home</button>
+			<button  class="confirmbtn" onclick="saveReminder()"> Confirm</button>
+			<button  onclick="logout()"> logout</button>
+
+			</div>
+		</form> 
+	</div>
+
+<script type="text/javascript">
+	var d = !!localStorage.getItem('sessionid')
+	if (!d) {
+		window.location.href = 'login.html'
+	}
+	function logout(){
+		localStorage.setItem('sessionid', '')
+		window.location.href = 'login.html'
+	}
+</script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBrm1voECJXC7paHhrKZNEGEpAfWNxgcMU",
+    authDomain: "reminderapp-51e92.firebaseapp.com",
+    databaseURL: "https://reminderapp-51e92.firebaseio.com",
+    projectId: "reminderapp-51e92",
+    storageBucket: "reminderapp-51e92.appspot.com",
+    messagingSenderId: "276849985833",
+    appId: "1:276849985833:web:ef60ca12120b4107108f38",
+    measurementId: "G-2X2LTRW0WT"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  
+  var db = firebase.database();
+
+
+  	// { "date" : true}, {"subject": true}, {"description":true},{"email": false}, {"contact": false}, {"sms":false}, {"recur": false}
+
+
+
+  function saveReminder() {
+    const fields = [
+  		'date','subject', 'description', 'email', 'contact', 'sms', 'enable',
+  	]
+  	const d = document.getElementById('date')
+  	console.log(d.value)
+  	let data = {
+  		date: '',
+  		subject: '',
+  		description: '',
+  		email: '',
+  		contact: '',
+  		sms: '',
+  		recur: '',
+  		enable: 'true'
+  	}
+  	fields.forEach((e,i) =>{
+  		let d = document.getElementById(e)
+  		data[e] = d.value
+  	})
+  	console.log(data)
+  	db.ref('/reminders/').push(data)
+  }
+</script>
+</body>
+</html>
