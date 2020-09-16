@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Reminder App</title>
+	<link rel="stylesheet" href ="./index.css"/>
+	<link href="https://fonts.googleapis.com/css?family=Quicksand&display=swap" rel="stylesheet">
+
+	<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
+
+	<script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-database.js"></script>
+</head>
+<body>
+	<div class="root">
+		<div class="navbar">
+			<div class="appname">
+				ReminderApp
+			</div>
+			
+		</div>
+		<div class="logpag">
+			 <div class="new-reminder-cont">
+			 	Welcome to Reminder Application : 
+			 	<span id="uname"></span>
+			 	<div id="todaydate"></div>
+			 	<button onclick="window.location.href='set_rem.html'">Set Reminder</button><br>
+			 	<button onclick="window.location.href='del_rem.html'">	 Delete Reminder</button><br>
+			 	<button onclick="window.location.href='view_rem.html'">View your Reminders</button><br>
+			 	<button onclick="window.location.href='enable_rem.html'">Enable Reminder</button><br>
+			 	<button onclick="window.location.href='disable.html'">Disable Reminder</button><br>
+			 	<button onclick="window.location.href='view_rem.html'">Modify Reminder</button><br>
+			 </div>
+			 <button onclick="logout()">logout</button>
+		</div>
+		<div style="height: 100px;"></div>
+	</div>
+
+<script type="text/javascript">
+	var d = !!localStorage.getItem('sessionid')
+	if (!d) {
+		window.location.href = 'login.html'
+	}
+	function logout(){
+		localStorage.setItem('sessionid', '')
+		window.location.href = 'login.html'
+
+	}
+	var d = document.getElementById('todaydate')
+	var t = new Date()
+	d.innerText = 'Today is ' + t.getDate() + '/' + (t.getMonth()+1) + '/' + t.getFullYear()
+
+	k =  document.getElementById('uname')
+	k.innerText= localStorage.getItem('sessionid')
+</script>
+
+</body>
+</html>
